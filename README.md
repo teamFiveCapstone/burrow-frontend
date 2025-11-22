@@ -1,75 +1,129 @@
-testing
+# Burrow Frontend
 
-# React + TypeScript + Vite
+A React TypeScript application for document processing and management with a modern, professional interface.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## What This App Is
 
-Currently, two official plugins are available:
+Burrow Frontend is a document management dashboard that provides:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **File Upload**: Upload documents for processing
+- **Pipeline Summary**: View overview of document processing status
+- **Document Management**: Browse documents with status filtering and pagination
+- **Modern UI**: Clean, responsive interface with a professional design
 
-## React Compiler
+## Getting Started
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Prerequisites
 
-## Expanding the ESLint configuration
+- Node.js (version 16 or higher)
+- npm or yarn package manager
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Installation
 
-```js
-export default defineConfig([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
+1. Clone the repository:
+   ```bash
+   git clone <repository-url>
+   cd burrow-frontend
+   ```
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+4. Open your browser and navigate to the local development URL (usually `http://localhost:5173`)
+
+### Available Scripts
+
+- `npm run dev` - Start development server with hot reload
+- `npm run build` - Build the app for production
+
+
+## Component Structure
+
+The application is built with a modular component architecture:
+
+
+### Core Components
+
+#### `Upload` (`src/components/Upload.tsx`)
+- **Purpose**: File upload form with drag-and-drop interface
+- **Features**: File selection, upload button, file validation
+- **Props**: `onUpload` callback for handling file uploads
+
+#### `SummaryDashboard` (`src/components/SummaryDashboard.tsx`)
+- **Purpose**: Display pipeline overview and summary statistics
+- **Features**: Status summaries, processing metrics
+- **Props**: `statusSummaries` array for displaying status counts
+
+#### `StatusSummary` (`src/components/StatusSummary.tsx`)
+- **Purpose**: Individual status display component
+- **Features**: Shows status name and count
+- **Props**: `data` object with status and count
+
+#### `DocumentsDashboard` (`src/components/DocumentsDashboard.tsx`)
+- **Purpose**: Main document management interface
+- **Features**:
+  - Status filter buttons (all, pending, running, failed, finished)
+  - Document list with pagination
+  - Responsive layout
+- **Props**: `documents`, pagination handlers (`onNext`, `onPrevious`, `hasNext`, `hasPrevious`)
+
+#### `Document` (`src/components/Document.tsx`)
+- **Purpose**: Individual document display
+- **Features**: Shows document name, status, and upload date
+- **Props**: `document` object with file information
+
+#### `Pagination` (`src/components/Pagination.tsx`)
+- **Purpose**: Cursor-style navigation controls
+- **Features**: Back/Forward buttons with disabled states
+- **Props**: Navigation handlers and state flags
+
+### Styling
+
+- **Framework**: Custom CSS with modern design system
+- **Design**: Professional, clean interface with:
+  - Card-based layout with subtle shadows
+  - Consistent spacing and typography
+  - Blue accent color scheme (#3b82f6)
+  - Responsive flexbox layout
+- **File**: All styles consolidated in `src/App.css`
+
+### Data Types
+
+```typescript
+// Document data structure
+interface DocumentData {
+  fileName: string;
+  status: string;
+  createdAt: string;
+}
+
+// Status summary structure
+interface StatusSummaryData {
+  status: string;
+  count: number;
+}
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Development Notes
 
-```js
-// eslint.config.js
-import reactX from "eslint-plugin-react-x";
-import reactDom from "eslint-plugin-react-dom";
+- Built with **React 19** and **TypeScript**
+- Uses **Vite** for fast development and building
+- **ESLint** configured for code quality
+- Modular component design for easy maintenance and testing
+- All styling consolidated in a single CSS file for simplicity
 
-export default defineConfig([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs["recommended-typescript"],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
-```
+## TODOS
+
+- Add real API integration for document processing
+- Implement status filtering functionality
+- Add search and sorting capabilities
+- Include drag-and-drop file upload
+- Add loading states and error handling
+- Implement responsive design for mobile devices
