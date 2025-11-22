@@ -1,35 +1,45 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import "./App.css";
+import { Upload } from "./components/Upload";
+import { SummaryDashboard } from "./components/SummaryDashboard";
+import { DocumentsDashboard } from "./components/DocumentsDashboard";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const onUpload = () => {};
+
+  const files = [
+  {
+    fileName: "lion.pdf",
+    status: "pending",
+    createdAt: "2025-11-21T02:24:37.139Z"
+  },
+  {
+    fileName: "tiger.pdf",
+    status: "completed",
+    createdAt: "2025-11-20T11:10:12.000Z"
+  },
+  {
+    fileName: "zebra.pdf",
+    status: "pending",
+    createdAt: "2025-11-18T15:22:05.900Z"
+  },
+  {
+    fileName: "elephant.pdf",
+    status: "failed",
+    createdAt: "2025-11-17T22:33:44.721Z"
+  }]
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="main-container">
+      <div className="left-section">
+        <Upload onUpload={onUpload} />
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
+      <div className="right-section">
+        <SummaryDashboard />
+        <DocumentsDashboard documents={files}/>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </div>
+  );
 }
 
-export default App
+export default App;
