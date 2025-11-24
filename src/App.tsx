@@ -1,10 +1,38 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 import { Upload } from "./components/Upload";
 import { SummaryDashboard } from "./components/SummaryDashboard";
 import { DocumentsDashboard } from "./components/DocumentsDashboard";
+import { Login } from "./components/Login";
 
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [token, setToken] = useState<string | null>(null);
+  const [user, setUser] = useState<string | null>(null);
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem("burrow_token");
+    if (storedToken) {
+      setToken(storedToken);
+      setIsLoggedIn(true);
+      setUser("admin");
+    }
+  }, []);
+
+  const handleLogin = (newToken: string) => {
+    localStorage.setItem("burrow_token", newToken);
+    setToken(newToken);
+    setIsLoggedIn(true);
+    setUser("admin");
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("burrow_token");
+    setToken(null);
+    setIsLoggedIn(false);
+    setUser(null);
+  };
+
   const onUpload = () => {};
 
   const files = [
@@ -28,6 +56,10 @@ function App() {
     status: "failed",
     createdAt: "2025-11-17T22:33:44.721Z"
   }]
+
+  if (!isLoggedIn) {
+    return <Login onLogin={handleLogin} />;
+  }
 
   return (
     <div className="main-container">
