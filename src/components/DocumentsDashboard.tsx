@@ -1,32 +1,25 @@
-import React from 'react';
-import { Document, type DocumentData } from './Document';
-import { Pagination } from './Pagination';
+import React from "react";
+import { Document, type DocumentData } from "./Document";
+import { StatusButtons } from "./StatusButtons";
+import { Pagination } from "./Pagination";
 
 interface DocumentsDashboardProps {
   documents: DocumentData[];
-  onNext?: () => void;
-  onPrevious?: () => void;
-  hasNext?: boolean;
-  hasPrevious?: boolean;
+  onStatusChange?: (status: string | undefined) => void;
+  onNextPage?: () => void;
+  hasNextPage?: boolean;
 }
 
 export const DocumentsDashboard: React.FC<DocumentsDashboardProps> = ({
   documents,
-  onNext,
-  onPrevious,
-  hasNext,
-  hasPrevious
+  onStatusChange,
+  onNextPage,
+  hasNextPage = false,
 }) => {
   return (
     <div className="documents-dashboard">
       <h1>Document status</h1>
-      <div className="status-buttons">
-        <button>all</button>
-        <button>pending</button>
-        <button>running</button>
-        <button>failed</button>
-        <button>finished</button>
-      </div>
+      <StatusButtons onStatusChange={onStatusChange} />
       <div className="documents-table-container">
         <table className="documents-table">
           <thead>
@@ -39,16 +32,18 @@ export const DocumentsDashboard: React.FC<DocumentsDashboardProps> = ({
           </thead>
           <tbody>
             {documents.map((doc, index) => (
-              <Document key={doc.documentId || `${doc.fileName}-${index}`} document={doc} />
+              <Document
+                key={doc.documentId || `${doc.fileName}-${index}`}
+                document={doc}
+              />
             ))}
           </tbody>
         </table>
       </div>
       <Pagination
-        onNext={onNext}
-        onPrevious={onPrevious}
-        hasNext={hasNext}
-        hasPrevious={hasPrevious}
+        onNext={onNextPage}
+        hasNext={hasNextPage}
+        hasPrevious={false}
       />
     </div>
   );

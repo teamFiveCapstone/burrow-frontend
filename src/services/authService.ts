@@ -1,9 +1,7 @@
+import type { DocumentData } from "../components/Document";
+
 interface LoginResponse {
   jwt: string;
-}
-
-interface LoginError {
-  error: string;
 }
 
 export const loginUser = async (
@@ -39,16 +37,54 @@ export const loginUser = async (
   }
 };
 
-export const checkTokenExpiredError = (error: any): boolean => {
-  if (error && error.error === "Token expired, please sign in again.") {
+export const checkTokenExpiredError = (error: unknown): boolean => {
+  if (
+    error &&
+    typeof error === "object" &&
+    "error" in error &&
+    error.error === "Token expired, please sign in again."
+  ) {
     return true;
   }
   return false;
 };
 
-export const fetchDocuments = async (token: string) => {
+export interface LastEvaluatedKey {
+  lastCreatedAt?: string;
+  lastEvaluatedKeys?: Record<string, unknown>;
+  status?: string;
+  documentId?: string;
+  createdAt?: string;
+}
+
+export interface FetchDocumentsResponse {
+  items: DocumentData[];
+  lastEvaluatedKey?: LastEvaluatedKey;
+}
+
+export const fetchDocuments = async (
+  token: string,
+  status?: string,
+  lastEvaluatedKey?: LastEvaluatedKey
+): Promise<FetchDocumentsResponse> => {
   try {
-    const response = await fetch("/api/documents", {
+    let url = "/api/documents";
+    const params: string[] = [];
+
+    if (status) {
+      params.push(`status=${status}`);
+    }
+
+    if (lastEvaluatedKey) {
+      const encodedKey = encodeURIComponent(JSON.stringify(lastEvaluatedKey));
+      params.push(`lastEvaluatedKey=${encodedKey}`);
+    }
+
+    if (params.length > 0) {
+      url += `?${params.join("&")}`;
+    }
+
+    const response = await fetch(url, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -76,7 +112,10 @@ export const fetchDocuments = async (token: string) => {
     }
 
     const data = await response.json();
-    return data;
+    return {
+      items: data.items || [],
+      lastEvaluatedKey: data.lastEvaluatedKey,
+    };
   } catch (error) {
     console.error("Fetch documents error:", error);
     if (error instanceof Error) {
@@ -90,10 +129,13 @@ export interface UploadResult {
   fileName: string;
   success: boolean;
   error?: string;
-  data?: any;
+  data?: DocumentData;
 }
 
-export const uploadDocument = async (token: string, selectedFile: File): Promise<UploadResult> => {
+export const uploadDocument = async (
+  token: string,
+  selectedFile: File
+): Promise<UploadResult> => {
   try {
     const formData = new FormData();
     formData.append("file", selectedFile);
@@ -111,13 +153,13 @@ export const uploadDocument = async (token: string, selectedFile: File): Promise
         const errorData = await response.json();
         errorMessage = errorData.error || errorData.message || errorMessage;
       } catch {
-        errorMessage = await response.text() || errorMessage;
+        errorMessage = (await response.text()) || errorMessage;
       }
 
       return {
         fileName: selectedFile.name,
         success: false,
-        error: errorMessage
+        error: errorMessage,
       };
     }
 
@@ -125,13 +167,13 @@ export const uploadDocument = async (token: string, selectedFile: File): Promise
     return {
       fileName: selectedFile.name,
       success: true,
-      data
+      data,
     };
   } catch (error) {
     return {
       fileName: selectedFile.name,
       success: false,
-      error: error instanceof Error ? error.message : 'Network error occurred'
+      error: error instanceof Error ? error.message : "Network error occurred",
     };
   }
 };
