@@ -54,11 +54,10 @@ function App() {
     loadDocuments();
   }, [token]);
 
-  //!!!!!ZACH Added useEffect for SSE
   useEffect(() => {
     if (!isLoggedIn) return;
 
-    const es = new EventSource("/api/events");
+    const es = new EventSource(`/api/events?token=${token}`);
 
     es.onmessage = (event) => {
       try {
