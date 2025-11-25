@@ -54,6 +54,39 @@ function App() {
     loadDocuments();
   }, [token]);
 
+  //!!!!!ZACH Added useEffect for SSE
+  useEffect(() => {
+    if (!isLoggedIn) return;
+
+    const es = new EventSource("/api/events");
+
+    es.onmessage = (event) => {
+      try {
+        const updatedDoc = JSON.parse(event.data) as DocumentData;
+
+        setDocuments((prev) => {
+          const idx = prev.findIndex(
+            (d) => d.documentId === updatedDoc.documentId
+          );
+
+          if (idx === -1) {
+            return [updatedDoc, ...prev];
+          }
+
+          const next = [...prev];
+          next[idx] = { ...next[idx], ...updatedDoc };
+          return next;
+        });
+      } catch (err) {
+        console.error("Error parsing SSE event:", err);
+      }
+    };
+
+    return () => {
+      es.close();
+    };
+  }, [isLoggedIn]);
+
   const handleLogin = (newToken: string) => {
     localStorage.setItem("burrow_token", newToken);
     setToken(newToken);
@@ -94,7 +127,7 @@ function App() {
 
     // Add successfully uploaded documents to the documents list
     if (uploadedDocuments.length > 0) {
-      setDocuments([...uploadedDocuments, ...documents]);
+      setDocuments((prev) => [...uploadedDocuments, ...prev]);
     }
 
     // No longer redirect to dashboard - stay on upload page
