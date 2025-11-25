@@ -27,10 +27,22 @@ export const DocumentsDashboard: React.FC<DocumentsDashboardProps> = ({
         <button>failed</button>
         <button>finished</button>
       </div>
-      <div>
-        {documents.map((doc, index) => (
-          <Document key={`${doc.fileName}-${index}`} document={doc} />
-        ))}
+      <div className="documents-table-container">
+        <table className="documents-table">
+          <thead>
+            <tr>
+              <th>File Name</th>
+              <th>Status</th>
+              <th>Size</th>
+              <th>Upload Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {documents.map((doc, index) => (
+              <Document key={doc.documentId || `${doc.fileName}-${index}`} document={doc} />
+            ))}
+          </tbody>
+        </table>
       </div>
       <Pagination
         onNext={onNext}

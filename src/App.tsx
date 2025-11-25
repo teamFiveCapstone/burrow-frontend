@@ -6,12 +6,22 @@ import { DocumentsDashboard } from "./components/DocumentsDashboard";
 import { Login } from "./components/Login";
 import { Header } from "./components/Header";
 import { Sidebar } from "./components/Sidebar";
+import type { DocumentData } from "./components/Document";
+import {
+  fetchDocuments,
+  uploadDocument,
+  type UploadResult,
+} from "./services/authService";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<string | null>(null);
-  const [activeView, setActiveView] = useState<'dashboard' | 'upload'>('dashboard');
+  const [activeView, setActiveView] = useState<"dashboard" | "upload">(
+    "dashboard"
+  );
+  const [documents, setDocuments] = useState<DocumentData[]>([]);
+  const [uploadResults, setUploadResults] = useState<UploadResult[]>([]);
 
   useEffect(() => {
     const storedToken = localStorage.getItem("burrow_token");
@@ -21,6 +31,28 @@ function App() {
       setUser("admin");
     }
   }, []);
+
+  useEffect(() => {
+    const loadDocuments = async () => {
+      if (!token) {
+        return;
+      }
+
+      try {
+        const documents = await fetchDocuments(token);
+        console.log(documents);
+        setDocuments(documents);
+      } catch (error) {
+        console.error("Failed to load documents:", error);
+        // If token is expired, log out user
+        if (error instanceof Error && error.message.includes("Token expired")) {
+          // handleLogout();
+        }
+      }
+    };
+
+    loadDocuments();
+  }, [token]);
 
   const handleLogin = (newToken: string) => {
     localStorage.setItem("burrow_token", newToken);
@@ -36,40 +68,47 @@ function App() {
     setUser(null);
   };
 
-  const onUpload = () => {};
+  const handleUpload = async (selectedFiles: File[]) => {
+    if (!token) {
+      return;
+    }
 
-  const files = [
-    {
-      fileName: "lion.pdf",
-      status: "pending",
-      createdAt: "2025-11-21T02:24:37.139Z",
-    },
-    {
-      fileName: "tiger.pdf",
-      status: "completed",
-      createdAt: "2025-11-20T11:10:12.000Z",
-    },
-    {
-      fileName: "zebra.pdf",
-      status: "pending",
-      createdAt: "2025-11-18T15:22:05.900Z",
-    },
-    {
-      fileName: "elephant.pdf",
-      status: "failed",
-      createdAt: "2025-11-17T22:33:44.721Z",
-    },
-  ];
+    const results: UploadResult[] = [];
+    const uploadedDocuments = [];
+
+    for (const file of selectedFiles) {
+      console.log(`Uploading ${file.name}...`);
+      const result = await uploadDocument(token, file);
+      results.push(result);
+
+      if (result.success) {
+        uploadedDocuments.push(result.data);
+        console.log(`Successfully uploaded ${file.name}`);
+      } else {
+        console.error(`Failed to upload ${file.name}:`, result.error);
+      }
+    }
+
+    // Update results to show in the Upload component
+    setUploadResults(results);
+
+    // Add successfully uploaded documents to the documents list
+    if (uploadedDocuments.length > 0) {
+      setDocuments([...uploadedDocuments, ...documents]);
+    }
+
+    // No longer redirect to dashboard - stay on upload page
+  };
 
   if (!isLoggedIn) {
     return <Login onLogin={handleLogin} />;
   }
 
   const renderMainContent = () => {
-    if (activeView === 'upload') {
+    if (activeView === "upload") {
       return (
         <div className="main-content-upload">
-          <Upload onUpload={onUpload} />
+          <Upload onUpload={handleUpload} uploadResults={uploadResults} />
         </div>
       );
     }
@@ -77,7 +116,7 @@ function App() {
     return (
       <div className="main-content-dashboard">
         <SummaryDashboard />
-        <DocumentsDashboard documents={files} />
+        <DocumentsDashboard documents={documents} />
       </div>
     );
   };
@@ -87,9 +126,7 @@ function App() {
       <Sidebar activeView={activeView} onViewChange={setActiveView} />
       <div className="main-area">
         <Header isLoggedIn={isLoggedIn} onLogOut={handleLogOut} user={user} />
-        <div className="main-content">
-          {renderMainContent()}
-        </div>
+        <div className="main-content">{renderMainContent()}</div>
       </div>
     </div>
   );
