@@ -11,6 +11,7 @@ import {
   fetchDocuments,
   uploadDocument,
   type UploadResult,
+  type LastEvaluatedKey,
 } from "./services/authService";
 
 function App() {
@@ -22,6 +23,26 @@ function App() {
   );
   const [documents, setDocuments] = useState<DocumentData[]>([]);
   const [uploadResults, setUploadResults] = useState<UploadResult[]>([]);
+  const [lastEvaluatedKey, setLastEvaluatedKey] =
+    useState<LastEvaluatedKey | null>(null);
+  const [hasNextPage, setHasNextPage] = useState<boolean>(false);
+  const [currentStatus, setCurrentStatus] = useState<string | undefined>(
+    undefined
+  );
+
+  const handleLogOut = () => {
+    localStorage.removeItem("burrow_token");
+    setToken(null);
+    setIsLoggedIn(false);
+    setUser(null);
+  };
+
+  const handleLogin = (newToken: string) => {
+    localStorage.setItem("burrow_token", newToken);
+    setToken(newToken);
+    setIsLoggedIn(true);
+    setUser("admin");
+  };
 
   useEffect(() => {
     const storedToken = localStorage.getItem("burrow_token");
@@ -39,14 +60,16 @@ function App() {
       }
 
       try {
-        const documents = await fetchDocuments(token);
-        console.log(documents);
-        setDocuments(documents);
+        const response = await fetchDocuments(token);
+        console.log(response);
+        setDocuments(response.items);
+        setLastEvaluatedKey(response.lastEvaluatedKey || null);
+        setHasNextPage(!!response.lastEvaluatedKey);
       } catch (error) {
         console.error("Failed to load documents:", error);
         // If token is expired, log out user
         if (error instanceof Error && error.message.includes("Token expired")) {
-          // handleLogout();
+          handleLogOut();
         }
       }
     };
@@ -54,6 +77,28 @@ function App() {
     loadDocuments();
   }, [token]);
 
+  const handleStatusChange = async (status: string | undefined) => {
+    if (!token) {
+      return;
+    }
+
+    // Reset pagination when status filter changes
+    setLastEvaluatedKey(null);
+    setHasNextPage(false);
+    setCurrentStatus(status);
+
+    try {
+      const response = await fetchDocuments(token, status);
+      setDocuments(response.items);
+      setLastEvaluatedKey(response.lastEvaluatedKey || null);
+      setHasNextPage(!!response.lastEvaluatedKey);
+    } catch (error) {
+      console.error("Failed to load documents:", error);
+      // If token is expired, log out user
+      if (error instanceof Error && error.message.includes("Token expired")) {
+        handleLogOut();
+      }
+    }
   useEffect(() => {
     if (!isLoggedIn) return;
 
@@ -93,11 +138,28 @@ function App() {
     setUser("admin");
   };
 
-  const handleLogOut = () => {
-    localStorage.removeItem("burrow_token");
-    setToken(null);
-    setIsLoggedIn(false);
-    setUser(null);
+  const handleNextPage = async () => {
+    if (!token || !lastEvaluatedKey) {
+      return;
+    }
+
+    try {
+      const response = await fetchDocuments(
+        token,
+        currentStatus,
+        lastEvaluatedKey
+      );
+      // Append new items to existing documents
+      setDocuments([...response.items]);
+      setLastEvaluatedKey(response.lastEvaluatedKey || null);
+      setHasNextPage(!!response.lastEvaluatedKey);
+    } catch (error) {
+      console.error("Failed to load next page:", error);
+      // If token is expired, log out user
+      if (error instanceof Error && error.message.includes("Token expired")) {
+        handleLogOut();
+      }
+    }
   };
 
   const handleUpload = async (selectedFiles: File[]) => {
@@ -106,14 +168,14 @@ function App() {
     }
 
     const results: UploadResult[] = [];
-    const uploadedDocuments = [];
+    const uploadedDocuments: DocumentData[] = [];
 
     for (const file of selectedFiles) {
       console.log(`Uploading ${file.name}...`);
       const result = await uploadDocument(token, file);
       results.push(result);
 
-      if (result.success) {
+      if (result.success && result.data) {
         uploadedDocuments.push(result.data);
         console.log(`Successfully uploaded ${file.name}`);
       } else {
@@ -148,7 +210,12 @@ function App() {
     return (
       <div className="main-content-dashboard">
         <SummaryDashboard />
-        <DocumentsDashboard documents={documents} />
+        <DocumentsDashboard
+          documents={documents}
+          onStatusChange={handleStatusChange}
+          onNextPage={handleNextPage}
+          hasNextPage={hasNextPage}
+        />
       </div>
     );
   };
