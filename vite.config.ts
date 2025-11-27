@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://test-lb-tf-791802287.us-east-1.elb.amazonaws.com",
+        target: "http://burrow-76862857.us-east-1.elb.amazonaws.com",
       },
     },
   },
