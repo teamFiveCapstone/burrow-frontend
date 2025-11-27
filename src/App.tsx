@@ -37,7 +37,7 @@ function App() {
     setIsLoggedIn(false);
     setUser(null);
   };
-
+  
   const handleLogin = (newToken: string) => {
     localStorage.setItem("burrow_token", newToken);
     setToken(newToken);
@@ -134,12 +134,6 @@ function App() {
     };
   }, [isLoggedIn]);
 
-  // const handleLogin = (newToken: string) => {
-  //   localStorage.setItem("burrow_token", newToken);
-  //   setToken(newToken);
-  //   setIsLoggedIn(true);
-  //   setUser("admin");
-  // };
 
   const handleNextPage = async () => {
     if (!token || !lastEvaluatedKey) {
