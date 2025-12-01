@@ -10,6 +10,7 @@ import type { DocumentData } from "./components/Document";
 import {
   fetchDocuments,
   uploadDocument,
+  deleteDocument,
   type UploadResult,
   type LastEvaluatedKey,
 } from "./services/authService";
@@ -99,6 +100,8 @@ function App() {
         handleLogOut();
       }
     }
+  };
+
   useEffect(() => {
     if (!isLoggedIn) return;
 
@@ -131,12 +134,12 @@ function App() {
     };
   }, [isLoggedIn]);
 
-  const handleLogin = (newToken: string) => {
-    localStorage.setItem("burrow_token", newToken);
-    setToken(newToken);
-    setIsLoggedIn(true);
-    setUser("admin");
-  };
+  // const handleLogin = (newToken: string) => {
+  //   localStorage.setItem("burrow_token", newToken);
+  //   setToken(newToken);
+  //   setIsLoggedIn(true);
+  //   setUser("admin");
+  // };
 
   const handleNextPage = async () => {
     if (!token || !lastEvaluatedKey) {
@@ -194,6 +197,43 @@ function App() {
     // No longer redirect to dashboard - stay on upload page
   };
 
+  const handleDelete = async (documentId: string , fileName: string) => {
+    if (!token) {
+      return;
+    }
+    
+    const confirmed = window.confirm(`Delete "${fileName}"?`);
+
+    if (!confirmed) {
+      return;
+    }
+    
+    setDocuments((prev) => 
+      prev.map((document) =>
+        document.documentId === documentId
+        ? { ...document, status: 'deleting' as const }
+        : document
+      )
+    )
+
+    try {
+      await deleteDocument(token, documentId);
+    } catch (error) {
+      console.error('Failed to delete document:', error);
+      setDocuments((prev) => 
+      prev.map((document) =>
+        document.documentId === documentId
+        ? { ...document, status: 'delete_failed' as const }
+        : document
+        )
+      )
+      
+      if (error instanceof Error && error.message.includes("Token expired")) {
+        handleLogOut();
+      }
+    }
+  };
+
   if (!isLoggedIn) {
     return <Login onLogin={handleLogin} />;
   }
@@ -215,6 +255,7 @@ function App() {
           onStatusChange={handleStatusChange}
           onNextPage={handleNextPage}
           hasNextPage={hasNextPage}
+          onDelete={handleDelete}
         />
       </div>
     );
