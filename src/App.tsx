@@ -134,7 +134,6 @@ function App() {
     };
   }, [isLoggedIn]);
 
-
   const handleNextPage = async () => {
     if (!token || !lastEvaluatedKey) {
       return;
