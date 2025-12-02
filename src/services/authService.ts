@@ -177,3 +177,39 @@ export const uploadDocument = async (
     };
   }
 };
+
+//`uploadDocument` - same auth header pattern
+// - URL: `/api/documents/${documentId}`
+// - Auth: `Authorization: Bearer ${token}` header
+// - Error handling: 401 (token expired), 409 (doc still processing)
+// - Return: void (DELETE returns no body on success)
+export const deleteDocument = async (
+  token: string,
+  documentId: string
+) : Promise<void> => {
+  try {
+    const response = await fetch(`/api/documents/${documentId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      if (response.status === 409) {
+        throw new Error('Cannot delete document while processing');
+      }
+      if (response.status === 403) {
+        throw new Error('Authentication failed.');
+      }
+
+      throw new Error(`Delete failed (${response.status})`);
+    }
+  }
+  catch (error) {
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error("Network error. Please check your connection.");
+  }
+}

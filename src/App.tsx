@@ -6,10 +6,12 @@ import { DocumentsDashboard } from "./components/DocumentsDashboard";
 import { Login } from "./components/Login";
 import { Header } from "./components/Header";
 import { Sidebar } from "./components/Sidebar";
+import ApiSandbox from "./components/ApiSandbox";
 import type { DocumentData } from "./components/Document";
 import {
   fetchDocuments,
   uploadDocument,
+  deleteDocument,
   type UploadResult,
   type LastEvaluatedKey,
 } from "./services/authService";
@@ -18,7 +20,7 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<string | null>(null);
-  const [activeView, setActiveView] = useState<"dashboard" | "upload">(
+  const [activeView, setActiveView] = useState<"dashboard" | "upload" | "sandbox">(
     "dashboard"
   );
   const [documents, setDocuments] = useState<DocumentData[]>([]);
@@ -133,7 +135,6 @@ function App() {
     };
   }, [isLoggedIn]);
 
-
   const handleNextPage = async () => {
     if (!token || !lastEvaluatedKey) {
       return;
@@ -190,6 +191,43 @@ function App() {
     // No longer redirect to dashboard - stay on upload page
   };
 
+  const handleDelete = async (documentId: string , fileName: string) => {
+    if (!token) {
+      return;
+    }
+    
+    const confirmed = window.confirm(`Delete "${fileName}"?`);
+
+    if (!confirmed) {
+      return;
+    }
+    
+    setDocuments((prev) => 
+      prev.map((document) =>
+        document.documentId === documentId
+        ? { ...document, status: 'deleting' as const }
+        : document
+      )
+    )
+
+    try {
+      await deleteDocument(token, documentId);
+    } catch (error) {
+      console.error('Failed to delete document:', error);
+      setDocuments((prev) => 
+      prev.map((document) =>
+        document.documentId === documentId
+        ? { ...document, status: 'delete_failed' as const }
+        : document
+        )
+      )
+      
+      if (error instanceof Error && error.message.includes("Token expired")) {
+        handleLogOut();
+      }
+    }
+  };
+
   if (!isLoggedIn) {
     return <Login onLogin={handleLogin} />;
   }
@@ -203,6 +241,14 @@ function App() {
       );
     }
 
+    if (activeView === "sandbox") {
+      return (
+        <div className="main-content-sandbox">
+          <ApiSandbox />
+        </div>
+      );
+    }
+
     return (
       <div className="main-content-dashboard">
         <SummaryDashboard />
@@ -211,6 +257,7 @@ function App() {
           onStatusChange={handleStatusChange}
           onNextPage={handleNextPage}
           hasNextPage={hasNextPage}
+          onDelete={handleDelete}
         />
       </div>
     );
