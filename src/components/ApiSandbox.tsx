@@ -1,35 +1,36 @@
-import { useState } from 'react';
-import { ApiReferenceReact } from '@scalar/api-reference-react';
-import '@scalar/api-reference-react/style.css';
+import { useState } from "react";
+import { ApiReferenceReact } from "@scalar/api-reference-react";
+import "@scalar/api-reference-react/style.css";
 
 const ApiSandbox = () => {
-  const [apiToken, setApiToken] = useState<string>('');
-
+  const [apiToken, setApiToken] = useState<string>("");
+  setApiToken;
   return (
     <div className="api-sandbox-wrapper">
       <div className="api-sandbox-container">
         <ApiReferenceReact
           configuration={{
+            // @ts-ignore
             spec: {
-              url: '/query-service/openapi.json'
+              url: "/query-service/openapi.json",
             },
             authentication: {
-              preferredSecurityScheme: 'APIKeyHeader',
+              preferredSecurityScheme: "APIKeyHeader",
               apiKey: {
-                token: apiToken  
-              }
-            },
-            theme: 'default',
-            layout: 'modern',
-            hideModels: true, 
+                token: apiToken,
+              },
+            } as any,
+            theme: "default",
+            layout: "modern",
+            hideModels: true,
             hiddenClients: true,
-            documentDownloadType: 'none',
+            documentDownloadType: "none",
             hideClientButton: true,
             hideDarkModeToggle: true,
             hideSearch: true,
             telemetry: false,
-            showDeveloperTools: 'never',
-            defaultOpenAllTags: true
+            showDeveloperTools: "never",
+            defaultOpenAllTags: true,
           }}
         />
       </div>
