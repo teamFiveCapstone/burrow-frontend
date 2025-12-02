@@ -6,6 +6,7 @@ import { DocumentsDashboard } from "./components/DocumentsDashboard";
 import { Login } from "./components/Login";
 import { Header } from "./components/Header";
 import { Sidebar } from "./components/Sidebar";
+import ApiSandbox from "./components/ApiSandbox";
 import type { DocumentData } from "./components/Document";
 import {
   fetchDocuments,
@@ -19,7 +20,7 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<string | null>(null);
-  const [activeView, setActiveView] = useState<"dashboard" | "upload">(
+  const [activeView, setActiveView] = useState<"dashboard" | "upload" | "sandbox">(
     "dashboard"
   );
   const [documents, setDocuments] = useState<DocumentData[]>([]);
@@ -236,6 +237,14 @@ function App() {
       return (
         <div className="main-content-upload">
           <Upload onUpload={handleUpload} uploadResults={uploadResults} />
+        </div>
+      );
+    }
+
+    if (activeView === "sandbox") {
+      return (
+        <div className="main-content-sandbox">
+          <ApiSandbox />
         </div>
       );
     }

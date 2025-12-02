@@ -1,8 +1,8 @@
 import logo from "../assets/images/Transparent Logo.png";
 
 interface SidebarProps {
-  activeView: 'dashboard' | 'upload';
-  onViewChange: (view: 'dashboard' | 'upload') => void;
+  activeView: 'dashboard' | 'upload' | 'sandbox';
+  onViewChange: (view: 'dashboard' | 'upload' | 'sandbox') => void;
 }
 
 export const Sidebar = ({ activeView, onViewChange }: SidebarProps) => {
@@ -24,6 +24,12 @@ export const Sidebar = ({ activeView, onViewChange }: SidebarProps) => {
           onClick={() => onViewChange('upload')}
         >
           Upload Files
+        </button>
+        <button
+          className={`sidebar-nav-button ${activeView === 'sandbox' ? 'active' : ''}`}
+          onClick={() => onViewChange('sandbox')}
+        >
+          Query API
         </button>
       </nav>
     </div>

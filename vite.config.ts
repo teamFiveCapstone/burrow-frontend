@@ -7,7 +7,11 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://burrow-2144090882.us-east-1.elb.amazonaws.com",
+        target: "http://burrow-895563380.us-east-1.elb.amazonaws.com",
+      },
+      "/query-service": {
+        target: "http://burrow-895563380.us-east-1.elb.amazonaws.com",
+        changeOrigin: true,
       },
     },
   },
