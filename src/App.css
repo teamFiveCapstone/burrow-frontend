@@ -774,8 +774,8 @@ body {
 
 .delete-button {
   padding: 0.5rem 1rem;
-  background: #fef2f2;
-  border: 1px solid #fca5a5;
+  background: #f8fafc;
+  border: 1.5px solid #fca5a5;
   border-radius: 8px;
   font-size: 0.8125rem;
   font-weight: 600;
@@ -785,15 +785,15 @@ body {
 }
 
 .delete-button:hover {
-  background: #fee2e2;
+  background: #f8fafc;
   border-color: #f87171;
-  color: #b91c1c;
+  color: #dc2626;
   transform: translateY(-1px);
   box-shadow: 0 2px 4px rgba(220, 38, 38, 0.15);
 }
 
 .delete-button:active {
-  background: #fee2e2;
+  background: #f8fafc;
   transform: translateY(1px);
 }
 
@@ -942,12 +942,12 @@ body {
   background: white;
   border: 2px solid rgba(226, 232, 240, 0.7);
   border-radius: 16px;
-  padding: 2rem;
+  padding: 1.5rem 2rem 1rem 2rem;
   text-align: center;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 2px 8px -1px rgba(0, 0, 0, 0.06),
     0 1px 3px -1px rgba(0, 0, 0, 0.04);
-  min-height: 180px;
+  min-height: 130px;
   display: flex;
   flex-direction: column;
   justify-content: center;
