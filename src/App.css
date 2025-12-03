@@ -196,8 +196,8 @@ body {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2rem;
-  padding-bottom: 1.75rem;
-  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 0;
+  border-bottom: none;
 }
 
 .documents-dashboard h1 {
