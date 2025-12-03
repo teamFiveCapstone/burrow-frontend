@@ -4,7 +4,6 @@ import { Upload } from "./components/Upload";
 import { SummaryDashboard } from "./components/SummaryDashboard";
 import { DocumentsDashboard } from "./components/DocumentsDashboard";
 import { Login } from "./components/Login";
-import { Header } from "./components/Header";
 import { Sidebar } from "./components/Sidebar";
 import ApiSandbox from "./components/ApiSandbox";
 import type { DocumentData } from "./components/Document";
@@ -20,9 +19,9 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<string | null>(null);
-  const [activeView, setActiveView] = useState<"dashboard" | "upload" | "sandbox">(
-    "dashboard"
-  );
+  const [activeView, setActiveView] = useState<
+    "dashboard" | "upload" | "sandbox"
+  >("dashboard");
   const [documents, setDocuments] = useState<DocumentData[]>([]);
   const [uploadResults, setUploadResults] = useState<UploadResult[]>([]);
   const [lastEvaluatedKey, setLastEvaluatedKey] =
@@ -38,7 +37,7 @@ function App() {
     setIsLoggedIn(false);
     setUser(null);
   };
-  
+
   const handleLogin = (newToken: string) => {
     localStorage.setItem("burrow_token", newToken);
     setToken(newToken);
@@ -191,37 +190,37 @@ function App() {
     // No longer redirect to dashboard - stay on upload page
   };
 
-  const handleDelete = async (documentId: string , fileName: string) => {
+  const handleDelete = async (documentId: string, fileName: string) => {
     if (!token) {
       return;
     }
-    
+
     const confirmed = window.confirm(`Delete "${fileName}"?`);
 
     if (!confirmed) {
       return;
     }
-    
-    setDocuments((prev) => 
+
+    setDocuments((prev) =>
       prev.map((document) =>
         document.documentId === documentId
-        ? { ...document, status: 'deleting' as const }
-        : document
+          ? { ...document, status: "deleting" as const }
+          : document
       )
-    )
+    );
 
     try {
       await deleteDocument(token, documentId);
     } catch (error) {
-      console.error('Failed to delete document:', error);
-      setDocuments((prev) => 
-      prev.map((document) =>
-        document.documentId === documentId
-        ? { ...document, status: 'delete_failed' as const }
-        : document
+      console.error("Failed to delete document:", error);
+      setDocuments((prev) =>
+        prev.map((document) =>
+          document.documentId === documentId
+            ? { ...document, status: "delete_failed" as const }
+            : document
         )
-      )
-      
+      );
+
       if (error instanceof Error && error.message.includes("Token expired")) {
         handleLogOut();
       }
@@ -265,9 +264,13 @@ function App() {
 
   return (
     <div className="app-layout">
-      <Sidebar activeView={activeView} onViewChange={setActiveView} />
+      <Sidebar
+        activeView={activeView}
+        onViewChange={setActiveView}
+        onLogOut={handleLogOut}
+        user={user}
+      />
       <div className="main-area">
-        <Header isLoggedIn={isLoggedIn} onLogOut={handleLogOut} user={user} />
         <div className="main-content">{renderMainContent()}</div>
       </div>
     </div>

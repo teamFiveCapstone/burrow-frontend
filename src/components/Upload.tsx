@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { type UploadResult } from "../services/authService";
 
 interface UploadProps {
@@ -8,6 +8,17 @@ interface UploadProps {
 
 export const Upload: React.FC<UploadProps> = ({ onUpload, uploadResults }) => {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
+
+  useEffect(() => {
+    if (uploadResults && uploadResults.length > 0) {
+      // Clear loading state after upload completes
+      const timer = setTimeout(() => {
+        setIsUploading(false);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [uploadResults]);
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -18,9 +29,10 @@ export const Upload: React.FC<UploadProps> = ({ onUpload, uploadResults }) => {
     }
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (selectedFiles.length > 0 && onUpload) {
+      setIsUploading(true);
       onUpload(selectedFiles);
       setSelectedFiles([]);
       (event.target as any).reset();
@@ -56,8 +68,12 @@ export const Upload: React.FC<UploadProps> = ({ onUpload, uploadResults }) => {
         )}
 
         <div>
-          <button type="submit" disabled={selectedFiles.length === 0}>
-            Upload {selectedFiles.length > 1 ? "Files" : "File"}
+          <button type="submit" disabled={selectedFiles.length === 0 || isUploading}>
+            {isUploading ? (
+              <span className="spinner"></span>
+            ) : (
+              "Upload"
+            )}
           </button>
         </div>
 

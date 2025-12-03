@@ -20,8 +20,10 @@ export const DocumentsDashboard: React.FC<DocumentsDashboardProps> = ({
 }) => {
   return (
     <div className="documents-dashboard">
-      <h1>Document status</h1>
-      <StatusButtons onStatusChange={onStatusChange} />
+      <div className="documents-dashboard-header">
+        <h1>Document Status</h1>
+        <StatusButtons onStatusChange={onStatusChange} />
+      </div>
       <div className="documents-table-container">
         <table className="documents-table">
           <thead>
