@@ -652,7 +652,7 @@ body {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  font-size: 0.875rem;
+  font-size: 1rem;
 }
 
 .documents-table thead th {
@@ -706,7 +706,7 @@ body {
 .document-filename {
   font-weight: 600;
   color: #0f172a;
-  font-size: 0.9rem;
+  font-size: 1rem;
 }
 
 .document-status {
