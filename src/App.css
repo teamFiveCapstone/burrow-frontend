@@ -389,7 +389,7 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background: #f8fafc;
+  background: #fffef8;
   padding: 2rem;
 }
 
@@ -404,8 +404,29 @@ body {
   max-width: 400px;
 }
 
+.login-logo-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 2.5rem;
+}
+
+.login-logo {
+  max-width: 220px;
+  height: auto;
+  margin-bottom: 0.25rem;
+}
+
+.login-subtitle {
+  font-size: 1.25rem;
+  color: #64748b;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  margin: 0;
+}
+
 .login-card h1 {
-  font-size: 1.5rem;
+  font-size: 2rem;
   font-weight: 700;
   color: #1e293b;
   margin-bottom: 1.5rem;
@@ -659,11 +680,11 @@ body {
   background: #ffffff;
   padding: 1rem 1.5rem;
   text-align: left;
-  font-weight: 700;
+  font-weight: 900;
   color: #475569;
   border-bottom: 1px solid rgba(226, 232, 240, 0.6);
   white-space: nowrap;
-  font-size: 0.75rem;
+  font-size: 0.9rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   position: sticky;

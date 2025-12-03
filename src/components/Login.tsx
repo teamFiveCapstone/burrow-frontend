@@ -1,26 +1,27 @@
-import React, { useState } from 'react';
-import {loginUser} from '../services/authService'
+import React, { useState } from "react";
+import { loginUser } from "../services/authService";
+import logo from "../assets/images/Transparent Logo.png";
 
 interface LoginProps {
   onLogin: (token: string) => void;
 }
 
 export const Login: React.FC<LoginProps> = ({ onLogin }) => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!username.trim() || !password.trim()) {
-      setError('Please enter both username and password');
+      setError("Please enter both username and password");
       return;
     }
 
     setIsLoading(true);
-    setError('');
+    setError("");
 
     try {
       const token = await loginUser(username, password);
@@ -29,7 +30,7 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError('An unexpected error occurred');
+        setError("An unexpected error occurred");
       }
     } finally {
       setIsLoading(false);
@@ -39,7 +40,10 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
   return (
     <div className="login-container">
       <div className="login-card">
-        <h1>Sign In</h1>
+        <div className="login-logo-container">
+          <img src={logo} alt="Burrow Logo" className="login-logo" />
+          <p className="login-subtitle">Pipeline Management</p>
+        </div>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label htmlFor="username">Username</label>
@@ -68,7 +72,7 @@ export const Login: React.FC<LoginProps> = ({ onLogin }) => {
           {error && <div className="error-message">{error}</div>}
 
           <button type="submit" disabled={isLoading}>
-            {isLoading ? 'Signing In...' : 'Sign In'}
+            {isLoading ? "Signing In..." : "Sign In"}
           </button>
         </form>
       </div>
