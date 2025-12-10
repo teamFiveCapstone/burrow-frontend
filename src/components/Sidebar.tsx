@@ -1,9 +1,10 @@
+import { useState } from "react";
 import logo from "../assets/images/Transparent Logo.png";
 import { Profile } from "./Profile";
 
 interface SidebarProps {
-  activeView: "dashboard" | "upload" | "sandbox";
-  onViewChange: (view: "dashboard" | "upload" | "sandbox") => void;
+  activeView: "dashboard" | "upload" | "query-api" | "pipeline-api";
+  onViewChange: (view: "dashboard" | "upload" | "query-api" | "pipeline-api") => void;
   onLogOut: () => void;
   user: string | null;
 }
@@ -14,6 +15,16 @@ export const Sidebar = ({
   onLogOut,
   user,
 }: SidebarProps) => {
+  const [apiDocsExpanded, setApiDocsExpanded] = useState(
+    activeView === "query-api" || activeView === "pipeline-api"
+  );
+
+  const isApiDocsActive = activeView === "query-api" || activeView === "pipeline-api";
+
+  const toggleApiDocs = () => {
+    setApiDocsExpanded(!apiDocsExpanded);
+  };
+
   return (
     <div className="sidebar">
       <div className="sidebar-logo">
@@ -37,14 +48,41 @@ export const Sidebar = ({
         >
           Upload Files
         </button>
-        <button
-          className={`sidebar-nav-button ${
-            activeView === "sandbox" ? "active" : ""
-          }`}
-          onClick={() => onViewChange("sandbox")}
-        >
-          Query API
-        </button>
+
+        <div className="sidebar-section">
+          <button
+            className={`sidebar-nav-button sidebar-section-button ${
+              isApiDocsActive ? "active" : ""
+            }`}
+            onClick={toggleApiDocs}
+          >
+            API Docs
+            <span className={`sidebar-expand-icon ${apiDocsExpanded ? "expanded" : ""}`}>
+              ▶
+            </span>
+          </button>
+
+          {apiDocsExpanded && (
+            <div className="sidebar-subsection">
+              <button
+                className={`sidebar-nav-button sidebar-subsection-button ${
+                  activeView === "query-api" ? "active" : ""
+                }`}
+                onClick={() => onViewChange("query-api")}
+              >
+                RAG API
+              </button>
+              <button
+                className={`sidebar-nav-button sidebar-subsection-button ${
+                  activeView === "pipeline-api" ? "active" : ""
+                }`}
+                onClick={() => onViewChange("pipeline-api")}
+              >
+                Pipeline Management API
+              </button>
+            </div>
+          )}
+        </div>
       </nav>
 
       <div className="sidebar-footer">

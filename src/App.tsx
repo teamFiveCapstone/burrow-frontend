@@ -5,7 +5,7 @@ import { SummaryDashboard } from "./components/SummaryDashboard";
 import { DocumentsDashboard } from "./components/DocumentsDashboard";
 import { Login } from "./components/Login";
 import { Sidebar } from "./components/Sidebar";
-import ApiSandbox from "./components/ApiSandbox";
+import PipelineApiDocs from "./components/PipelineApiDocs";
 import type { DocumentData } from "./components/Document";
 import {
   fetchDocuments,
@@ -14,13 +14,14 @@ import {
   type UploadResult,
   type LastEvaluatedKey,
 } from "./services/authService";
+import { ApiDocs } from "./components/ApiDocs";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<string | null>(null);
   const [activeView, setActiveView] = useState<
-    "dashboard" | "upload" | "sandbox"
+    "dashboard" | "upload" | "query-api" | "pipeline-api"
   >("dashboard");
   const [documents, setDocuments] = useState<DocumentData[]>([]);
   const [uploadResults, setUploadResults] = useState<UploadResult[]>([]);
@@ -240,10 +241,18 @@ function App() {
       );
     }
 
-    if (activeView === "sandbox") {
+    if (activeView === "query-api") {
       return (
-        <div className="main-content-sandbox">
-          <ApiSandbox />
+        <div className="main-content-docs">
+          <ApiDocs />
+        </div>
+      );
+    }
+
+    if (activeView === "pipeline-api") {
+      return (
+        <div className="main-content-docs">
+          <PipelineApiDocs />
         </div>
       );
     }
