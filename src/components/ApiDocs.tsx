@@ -2,12 +2,12 @@ import { useState } from "react";
 import { ApiReferenceReact } from "@scalar/api-reference-react";
 import "@scalar/api-reference-react/style.css";
 
-const ApiSandbox = () => {
+export const ApiDocs = () => {
   const [apiToken, setApiToken] = useState<string>("");
   setApiToken;
   return (
-    <div className="api-sandbox-wrapper">
-      <div className="api-sandbox-container">
+    <div className="api-docs-wrapper">
+      <div className="api-docs-container">
         <ApiReferenceReact
           configuration={{
             // @ts-ignore
@@ -37,5 +37,3 @@ const ApiSandbox = () => {
     </div>
   );
 };
-
-export default ApiSandbox;

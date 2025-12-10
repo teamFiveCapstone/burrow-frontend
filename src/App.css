@@ -1057,15 +1057,15 @@ body {
   font-weight: 500;
 }
 
-/* API Sandbox styling */
-.main-content-sandbox {
+/* API docs styling */
+.main-content-docs {
   height: 100%;
   overflow: auto;
   background: #f8fafc;
   padding: 0;
 }
 
-.api-sandbox-wrapper {
+.api-docs-wrapper {
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -1105,7 +1105,7 @@ body {
 }
 
 /* Scalar container */
-.api-sandbox-container {
+.api-docs-container {
   flex: 1;
   overflow: auto;
   /* Optional: customize Scalar with CSS variables */
@@ -1115,8 +1115,44 @@ body {
 }
 
 /* Hide "Powered by Scalar" footer */
-.api-sandbox-container [class*="powered-by"],
-.api-sandbox-container [class*="footer"],
-.api-sandbox-container footer {
+.api-docs-container [class*="powered-by"],
+.api-docs-container [class*="footer"],
+.api-docs-container footer {
   display: none !important;
+}
+
+/* Expandable sidebar sections */
+.sidebar-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-section-button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sidebar-expand-icon {
+  font-size: 0.75rem;
+  transition: transform 0.2s ease;
+  color: inherit;
+}
+
+.sidebar-expand-icon.expanded {
+  transform: rotate(90deg);
+}
+
+.sidebar-subsection {
+  margin-left: 0.75rem;
+  border-left: 2px solid rgba(226, 232, 240, 0.6);
+  padding-left: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.sidebar-subsection-button {
+  padding: 0.75rem 1rem !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  margin: 0.125rem 0 !important;
 }
