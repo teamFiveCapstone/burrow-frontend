@@ -113,6 +113,10 @@ function App() {
         const updatedDoc = JSON.parse(event.data) as DocumentData;
 
         setDocuments((prev) => {
+          if (updatedDoc.status === 'deleted') {
+            return prev.filter(d => d.documentId !== updatedDoc.documentId);
+          }
+
           const idx = prev.findIndex(
             (d) => d.documentId === updatedDoc.documentId
           );
