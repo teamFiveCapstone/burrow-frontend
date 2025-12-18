@@ -4,7 +4,9 @@ import { Profile } from "./Profile";
 
 interface SidebarProps {
   activeView: "dashboard" | "upload" | "query-api" | "pipeline-api";
-  onViewChange: (view: "dashboard" | "upload" | "query-api" | "pipeline-api") => void;
+  onViewChange: (
+    view: "dashboard" | "upload" | "query-api" | "pipeline-api"
+  ) => void;
   onLogOut: () => void;
   user: string | null;
 }
@@ -19,7 +21,8 @@ export const Sidebar = ({
     activeView === "query-api" || activeView === "pipeline-api"
   );
 
-  const isApiDocsActive = activeView === "query-api" || activeView === "pipeline-api";
+  const isApiDocsActive =
+    activeView === "query-api" || activeView === "pipeline-api";
 
   const toggleApiDocs = () => {
     setApiDocsExpanded(!apiDocsExpanded);
@@ -57,7 +60,11 @@ export const Sidebar = ({
             onClick={toggleApiDocs}
           >
             API Docs
-            <span className={`sidebar-expand-icon ${apiDocsExpanded ? "expanded" : ""}`}>
+            <span
+              className={`sidebar-expand-icon ${
+                apiDocsExpanded ? "expanded" : ""
+              }`}
+            >
               ▶
             </span>
           </button>
@@ -78,7 +85,7 @@ export const Sidebar = ({
                 }`}
                 onClick={() => onViewChange("pipeline-api")}
               >
-                Pipeline Management API
+                Pipeline API
               </button>
             </div>
           )}
